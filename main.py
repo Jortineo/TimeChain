@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QVBoxLayout, QMainWindow, QApplication, QHBoxLayout, QWidget, QPushButton, QLabel, QTimeEdit
-from PySide6.QtCore import QTimer, Qt, QTime
+from PySide6.QtCore import QTimer, Qt, QTime, QUrl
+from PySide6.QtMultimedia import QSoundEffect
 
 import sys
 
@@ -8,6 +9,9 @@ class customTimer(QWidget):
         super().__init__()
 
         self.ventana = ventana
+
+        self.setMaximumHeight(100)
+        self.setMinimumHeight(100)
 
         self.timer_label = QLabel("Timer")
 
@@ -18,6 +22,10 @@ class customTimer(QWidget):
         self.time_input.timeChanged.connect(self.change_time)
         self.time_input.setTime(QTime(0, 0, 0, 0)) #set it to 0
         self.time_input.setDisplayFormat("mm:ss") #set it to minutes, seconds instead of hours, minutes
+
+        self.sound_effect = QSoundEffect(self)
+        self.sound_effect.setSource(QUrl.fromLocalFile("Beep.wav"))
+        self.sound_effect.setVolume(0.8) #from 0.0 to 1.0
 
         self.time_label = QLabel(str(self.timer.remainingTime()))
 
@@ -36,6 +44,8 @@ class customTimer(QWidget):
     def on_timeout(self):
         self.timer.stop()
         self.time_label.setText("0")
+
+        self.sound_effect.play()
 
         try:
             self.ventana.finish_timer()
